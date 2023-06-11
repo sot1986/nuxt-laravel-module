@@ -45,9 +45,6 @@ export type ApiFetchBuilder<T> = T extends (request: infer Req, options?: infer 
       preFetch?: (request: Req, options?: Opt) => Promise<Resp | null>
       cache?: number
     }) => Promise<Resp>)
-    & {
-      fetchCsrfToken: T
-    }
   : T
 
 export type DifferentProperties<

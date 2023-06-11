@@ -41,6 +41,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     addImportsDir([
       resolver.resolve('.', 'runtime', 'composables'),
+      resolver.resolve('.', 'runtime', 'schemas'),
     ])
 
     // Transpile runtime

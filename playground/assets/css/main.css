@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-text-notification: theme('colors.indigo.600')
+}
+
+.success-notification {
+    --color-text-notification: theme('colors.green.500')
+}
+
+.error-notification {
+    --color-text-notification: theme('colors.red.600')
+}
+
+.warning-notification {
+    --color-text-notification: theme('colors.yellow.700' / 80%)
+}

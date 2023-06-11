@@ -2,13 +2,12 @@ import { FetchError } from 'ofetch'
 import type { ApiFetch } from '../types/api'
 import type { CreateApiFetchOptions } from '../types/createApiFetch'
 import stringifyQuery from './stringifyQuery'
-import { createError, useCookie } from '#imports'
+import { createError } from '#imports'
 
 export default function (baseFetch: NodeJS.Global['$fetch'], {
   cacheStorage,
   handleResponseValidationError,
   confirmCredentialsStore,
-  csrf,
 }: CreateApiFetchOptions): ApiFetch {
   function isCacheEnabled(...[request, options]: Parameters<NodeJS.Global['$fetch']>) {
     if (process.server)
@@ -66,46 +65,11 @@ export default function (baseFetch: NodeJS.Global['$fetch'], {
     await onSuccess(response)
   }
 
-  function fetchCsrfToken(target: NodeJS.Global['$fetch']) {
-    return async (...params: Parameters<NodeJS.Global['$fetch']>) => {
-      if (!csrf)
-        throw createError('No csrf token has been setup.')
-
-      if (process.server)
-        throw createError('Cannot Fetch CSRF cookie on server side.')
-
-      let fetchError: null | Error = null
-      try {
-        csrf.token.value = ''
-        csrf.fetching.value = true
-
-        await target(...params)
-
-        csrf.token.value = useCookie('XSRF-TOKEN', { default: () => '' }).value
-      }
-      catch (error) {
-        fetchError = (error instanceof Error) ? error : new Error('Error on fetching csrf token.')
-      }
-      finally {
-        csrf.fetching.value = false
-      }
-
-      if (fetchError)
-        throw fetchError
-
-      if (!csrf.token.value)
-        throw createError('Error on fetching csrf token.')
-    }
-  }
-
   const apiFetch = new Proxy(baseFetch, {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     get(target, p, _receiver: ApiFetch) {
       if (p in target)
         return target[p as keyof typeof target]
-
-      if (p === 'fetchCsrfToken')
-        return fetchCsrfToken(target)
 
       return undefined
     },

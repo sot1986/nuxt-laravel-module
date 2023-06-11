@@ -4,6 +4,7 @@ import convertDataCase from './utils/convertDataCase'
 import capitalizeString from './utils/capitalizeString'
 import stringifyQuery from './utils/stringifyQuery'
 import convertResponseErrorInZodError from './utils/convertResponseErrorInZodError'
+import { getCsrfHeaders, parseSetCookie } from './utils/sanctum'
 import type { Laravel } from './types/laravel'
 import { defineNuxtPlugin } from '#imports'
 
@@ -18,6 +19,8 @@ export default defineNuxtPlugin<{ laravel: Laravel }>(() => {
           capitalizeString,
           stringifyQuery,
           convertResponseErrorInZodError,
+          getCsrfHeaders,
+          parseSetCookie,
         },
       },
     },
