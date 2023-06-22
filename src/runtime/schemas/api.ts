@@ -76,16 +76,3 @@ export function cursorPaginatedResource<Tdata extends z.ZodTypeAny>(
 ) {
   return resource(dataSchema, CursorPaginationSchema)
 }
-
-export interface FetchSchemas {
-  cursorPaginatedResource: typeof cursorPaginatedResource
-  pagePaginatedResource: typeof pagePaginatedResource
-  resource: typeof resource
-  createResourceResponse: typeof createResourceResponse
-  simpleResource: typeof simpleResource
-  ValidationErrorResponseSchema: typeof ValidationErrorResponseSchema
-  ErrorDataSchema: typeof ErrorDataSchema
-  TimeStampsSchema: typeof TimeStampsSchema
-  PagePaginationSchema: typeof PagePaginationSchema
-  CursorPaginationSchema: typeof CursorPaginationSchema
-}

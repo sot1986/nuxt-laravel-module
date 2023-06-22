@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['../src/module', 'sot-helpers', '@pinia/nuxt'],
+  modules: ['../src/module', 'sot-helpers', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt'],
   sotNuxtLaravel: {
 
   },

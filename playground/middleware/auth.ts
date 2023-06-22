@@ -1,30 +1,23 @@
 import { FetchError } from 'ofetch'
-import { defineNuxtRouteMiddleware, navigateTo, simpleResource, useAsyncData, useNuxtApp } from '#imports'
+import { defineNuxtRouteMiddleware, navigateTo, useAsyncData, useNuxtApp } from '#imports'
 import { useAuthStore } from '~/stores/auth'
+import useAuth from '~/composables/useAuth'
 
 export default defineNuxtRouteMiddleware(async () => {
-  const authStore = useAuthStore()
+  const { $api, $pinia } = useNuxtApp()
+  const authStore = useAuthStore($pinia)
+  const { fetchUser } = useAuth()
 
   if (authStore.user)
     return
 
-  const { $api } = useNuxtApp()
-
-  const { error, data } = await useAsyncData(
+  const { error } = await useAsyncData(
     'user',
-    () => $api('/api/user', undefined, { validate: simpleResource(authStore.getUserSchema()) }),
+    () => fetchUser(),
   )
 
   if (error.value) {
     console.error(error.value instanceof FetchError ? error.value.response?._data : error.value)
-    return navigateTo('/login')
-  }
-
-  if (data.value)
-    authStore.user = { ...data.value.data }
-
-  if (!authStore.user) {
-    console.error('Authentication endpoint did not provide user details.')
     return navigateTo('/login')
   }
 })

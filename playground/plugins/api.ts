@@ -1,8 +1,8 @@
 import { appendResponseHeader } from 'h3'
 import { z } from 'zod'
-import type { ApiFetch } from '../../src/module'
 import { useNotificationStore } from '../stores/notifications'
 import { defineNuxtPlugin, useNuxtApp, useRequestEvent, useRequestHeaders, useRuntimeConfig } from '#imports'
+import type { ApiFetch } from '~/.nuxt/types/sot-nuxt-laravel'
 
 export default defineNuxtPlugin(() => {
   const { $laravel, $pinia } = useNuxtApp()
@@ -13,46 +13,50 @@ export default defineNuxtPlugin(() => {
   const event = useRequestEvent()
   const notificationStore = useNotificationStore($pinia)
 
-  function getCsrfHeaders() {
-    return $laravel.utils.getCsrfHeaders({
-      baseAppUrl: baseURL as string,
+  function getHeaders() {
+    return $laravel.getHeaders({
+      baseAppUrl: baseURL,
       cookieesRequestHeaders,
-      cookieNames: ['XSRF-TOKEN', 'laravel_session'],
+      cookieNames: ['XSRF-TOKEN', 'laravel_session', /^remember_web_/i],
     })
   }
 
   const baseApi = $fetch.create({
     baseURL: 'http://localhost',
     credentials: 'include',
-    headers: {
-      Accept: 'Application/json',
-    },
     onRequest({ options }) {
-      options.headers = { ...getCsrfHeaders(), ...options.headers }
+      options.headers = { Accept: 'Application/json', ...getHeaders(), ...options.headers }
 
       if (options.body)
-        options.body = $laravel.utils.convertDataCase(options.body, 'snakeCase')
+        options.body = $laravel.convertDataCase(options.body, 'snakeCase')
 
       if (options.query)
-        options.query = $laravel.utils.convertDataCase(options.query, 'snakeCase')
+        options.query = $laravel.convertDataCase(options.query, 'snakeCase')
+    },
+    onRequestError() {
+
     },
     onResponse({ response }) {
-      response._data = $laravel.utils.convertDataCase<unknown>(response._data, 'camelCase')
+      response._data = $laravel.convertDataCase<unknown>(response._data, 'camelCase')
 
       if (process.client)
         return
 
       const setCookie = response.headers.get('set-cookie')
       if (setCookie) {
-        $laravel.utils.parseSetCookie(setCookie).forEach((cookie) => {
+        $laravel.parseSetCookie(setCookie).forEach((cookie) => {
           appendResponseHeader(event, 'set-cookie', cookie)
         })
       }
     },
-    onResponseError({ response }) {
+    onResponseError({ response, options }) {
+      if (options.headers && 'SilenceError' in options.headers)
+        return
+
       const ErrorDataSchema = z.object({ message: z.string() })
       const check = ErrorDataSchema.safeParse(response._data)
       const message = check.success ? check.data.message : 'Backend communication error.'
+
       void notificationStore.addNotification({
         type: 'error',
         message,
@@ -61,11 +65,7 @@ export default defineNuxtPlugin(() => {
     },
   })
 
-  const api: ApiFetch = $laravel.utils.createApiFetch(baseApi, {
-    handleResponseValidationError(err) {
-      console.error(err.issues.at(0)?.message)
-    },
-  })
+  const api: ApiFetch = $laravel.createApiFetch(baseApi, {})
 
   return { provide: { api } }
 })

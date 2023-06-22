@@ -1,7 +1,7 @@
-import type { GetCsrfHeadersPayload } from '../types/sanctum'
+import type { GetHeadersPayload } from '../types/sanctum'
 import { useCookie } from '#imports'
 
-export function getCsrfHeaders(options: GetCsrfHeadersPayload) {
+export function getHeaders(options: GetHeadersPayload) {
   const headers: Record<string, string> = {}
 
   const token = useCookie('XSRF-TOKEN', { default: () => '' }).value
@@ -17,7 +17,14 @@ export function getCsrfHeaders(options: GetCsrfHeadersPayload) {
   if (options.cookieesRequestHeaders.cookie) {
     headers.cookie = options.cookieesRequestHeaders.cookie
       .split('; ')
-      .filter(c => options.cookieNames.includes(c.split('=')[0]))
+      .filter((c) => {
+        const cookie = c.split('=')[0]
+        return options.cookieNames.reduce(
+          (check, name) => check && (
+            typeof name === 'string'
+              ? name === cookie
+              : name.test(cookie)), true)
+      })
       .join('; ')
   }
 

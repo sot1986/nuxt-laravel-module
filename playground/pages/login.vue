@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { z } from 'zod'
 import { navigateTo } from 'nuxt/app'
-import { LoginSchema, ref, useAsyncData, useNuxtApp, useValidationError } from '#imports'
-import { useAuthStore } from '~/stores/auth'
+import { LaraAuthSchemas, ref, useAsyncData, useNuxtApp, useValidationError } from '#imports'
 
 defineOptions({
   name: 'LoginPage',
@@ -10,21 +9,20 @@ defineOptions({
 })
 
 const { $api } = useNuxtApp()
-const authStore = useAuthStore()
 
-const loginData = ref<z.infer<typeof LoginSchema>>({
+const loginData = ref<z.infer<typeof LaraAuthSchemas.LoginSchema>>({
   email: '',
   password: '',
   remember: false,
 })
 
 const { error, execute } = useAsyncData('login', async () => {
-  const body = LoginSchema.parse(loginData.value)
+  const body = LaraAuthSchemas.LoginSchema.parse(loginData.value)
   await $api<void>('/sanctum/csrf-cookie')
   return $api('/login', { method: 'POST', body })
 }, { server: false, immediate: false })
 
-const { validationError, cleanValError } = useValidationError<z.infer<typeof LoginSchema>>(error)
+const { validationError, cleanValError } = useValidationError<z.infer<typeof LaraAuthSchemas.LoginSchema>>(error)
 
 async function login() {
   await execute()
@@ -120,10 +118,33 @@ function resetLogin() {
         </div>
 
         <div>
+          <label
+            for="remember"
+            class="block text-sm font-medium leading-6 text-gray-900"
+          >Remeber</label>
+          <div class="mt-2 relative">
+            <input
+              id="remember"
+              v-model="loginData.remember"
+              name="remember"
+              type="checkbox"
+              autocomplete="remember"
+              required
+              class="block w-6 h-6 rounded-md border-0 py-1.5 text-indigo-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              tabindex="3"
+              @input="cleanValError('remember')"
+            >
+            <p class="text-red-500 absolute top-[100%] text-sm">
+              {{ validationError.remember?._errors.at(0) }}
+            </p>
+          </div>
+        </div>
+
+        <div>
           <button
             type="submit"
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            tabindex="3"
+            tabindex="4"
           >
             Sign in
           </button>
@@ -133,10 +154,12 @@ function resetLogin() {
       <p class="mt-10 text-center text-sm text-gray-500">
         Not a member?
         {{ ' ' }}
-        <a
-          href="#"
+        <nuxt-link
+          to="/register"
           class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-        >Start a 14 day free trial</a>
+        >
+          Start a 14 day free trial
+        </nuxt-link>
       </p>
     </div>
   </div>

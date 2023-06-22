@@ -1,4 +1,4 @@
-import { addImportsDir, addPlugin, addTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addImports, addImportsDir, addPlugin, addTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import defu from 'defu'
 import { z } from 'zod'
 
@@ -6,10 +6,6 @@ import { z } from 'zod'
 export interface ModuleOptions {
   confirmCredentialsErrorStatusCode: number
 }
-
-export * from './runtime/types/laravel'
-
-export * from './runtime/types/api'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -41,7 +37,23 @@ export default defineNuxtModule<ModuleOptions>({
 
     addImportsDir([
       resolver.resolve('.', 'runtime', 'composables'),
-      resolver.resolve('.', 'runtime', 'schemas'),
+    ])
+    addImports([
+      {
+        name: '*',
+        as: 'LaraApiSchemas',
+        from: resolver.resolve('.', 'runtime', 'schemas', 'api'),
+      },
+      {
+        name: '*',
+        as: 'LaraAuthSchemas',
+        from: resolver.resolve('.', 'runtime', 'schemas', 'auth'),
+      },
+      {
+        name: '*',
+        as: 'LaraCacheSchemas',
+        from: resolver.resolve('.', 'runtime', 'schemas', 'auth'),
+      },
     ])
 
     // Transpile runtime
@@ -51,6 +63,8 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'types/sot-nuxt-laravel.d.ts',
       getContents: () => [
         `import type { Laravel } from '${resolver.resolve('./runtime/types/laravel')}'`,
+        '',
+        `export type { ApiFetch } from '${resolver.resolve('./runtime/types/api')}'`,
         '',
         'interface sotNuxtLaravelPlugin {',
         '  $laravel: Laravel',

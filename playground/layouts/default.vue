@@ -26,15 +26,19 @@ async function logout() {
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col min-h-screen px-1 sm:px-2 lg:px-4">
     <header class="container mx-auto mt-2 py-4">
       <nav class="flex justify-between">
         <ul class="flex items-center space-x-4">
           <li>
-            Home
+            <nuxt-link to="/">
+              Home
+            </nuxt-link>
           </li>
-          <li>
-            Dashboard
+          <li v-if="authStore.user">
+            <nuxt-link to="/dashboard">
+              Dashboard
+            </nuxt-link>
           </li>
         </ul>
 
@@ -62,7 +66,8 @@ async function logout() {
         </ul>
       </nav>
     </header>
-    <main>
+
+    <main class="container mx-auto flex-1">
       <slot />
     </main>
   </div>

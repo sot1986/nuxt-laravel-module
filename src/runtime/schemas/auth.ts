@@ -1,16 +1,15 @@
 import { z } from 'zod'
 
-const NameSchema = z.string().max(255)
-const EmailSchema = z.string({
-  required_error: 'Email is required',
-}).min(1, { message: 'Email is required' }).email(
-  { message: 'Not a valid email.' },
-).max(255)
-const PasswordSchema = z.string({
-  required_error: 'Password is required',
-}).min(8, { message: 'Password must have at least 8 characters' }).max(50, {
-  message: 'Password must have maximum 50 charcaters.',
-})
+const NameSchema = z.string()
+  .min(1, { message: 'Name is required.' })
+  .max(255, { message: 'Max name length is 255 characters.' })
+const EmailSchema = z.string({ required_error: 'Email is required' })
+  .min(1, { message: 'Email is required' })
+  .email({ message: 'Not a valid email.' })
+  .max(255, { message: 'Max email length is 255 characters.' })
+const PasswordSchema = z.string({ required_error: 'Password is required' })
+  .min(8, { message: 'Password must have at least 8 characters' })
+  .max(50, { message: 'Password must have maximum 50 charcaters.' })
 const tokenSchema = z.string()
 
 export const RegisterSchema = z.object({

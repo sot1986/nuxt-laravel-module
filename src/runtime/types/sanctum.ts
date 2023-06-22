@@ -1,6 +1,6 @@
-export interface GetCsrfHeadersPayload {
+export interface GetHeadersPayload {
   baseAppUrl: string
-  cookieNames: string[]
+  cookieNames: (string | RegExp)[]
   cookieesRequestHeaders: { cookie?: string }
 }
 
