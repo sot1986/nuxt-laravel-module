@@ -4,6 +4,8 @@ import capitalizeString from './utils/capitalizeString'
 import stringifyQuery from './utils/stringifyQuery'
 import convertResponseErrorInZodError from './utils/convertResponseErrorInZodError'
 import { getHeaders, parseSetCookie } from './utils/sanctum'
+import headerExists from './utils/headerExists'
+import mergeHeaders from './utils/mergeHeaders'
 import { defineNuxtPlugin } from '#imports'
 
 export default defineNuxtPlugin(() => {
@@ -17,6 +19,8 @@ export default defineNuxtPlugin(() => {
         convertResponseErrorInZodError,
         getHeaders,
         parseSetCookie,
+        headerExists,
+        mergeHeaders,
       },
     },
   }

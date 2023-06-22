@@ -24,8 +24,11 @@ export default defineNuxtPlugin(() => {
   const baseApi = $fetch.create({
     baseURL: 'http://localhost',
     credentials: 'include',
+    headers: {
+      Accept: 'Application/json',
+    },
     onRequest({ options }) {
-      options.headers = { Accept: 'Application/json', ...getHeaders(), ...options.headers }
+      $laravel.mergeHeaders(getHeaders(), options)
 
       if (options.body)
         options.body = $laravel.convertDataCase(options.body, 'snakeCase')
@@ -50,7 +53,7 @@ export default defineNuxtPlugin(() => {
       }
     },
     onResponseError({ response, options }) {
-      if (options.headers && 'SilenceError' in options.headers)
+      if ($laravel.headerExists(notificationStore.SilenceHeader, options.headers))
         return
 
       const ErrorDataSchema = z.object({ message: z.string() })

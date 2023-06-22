@@ -15,6 +15,8 @@ export interface Laravel {
   convertResponseErrorInZodError: <T>(data: ErrorData) => ZodError<T>
   getHeaders: (options: GetHeadersPayload) => Record<string, string>
   parseSetCookie: (setCookie: string) => string[]
+  headerExists: (name: string, headers?: HeadersInit) => boolean
+  mergeHeaders: (newHeaders: Record<string, string>, options: { headers?: HeadersInit }) => void
 }
 
 export {}
