@@ -1,6 +1,6 @@
 {
   "name": "sot-nuxt-laravel",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Nuxt Module designed to facilitate backend communication with Laravel Api",
   "repository": "sot/sot-nuxt-laravel",
   "license": "MIT",
