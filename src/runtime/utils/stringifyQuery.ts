@@ -18,7 +18,7 @@ export default function (query?: Record<string, unknown>): string {
       return
 
     if (Array.isArray(value))
-      return baseQuery.push(...value.map(v => `${key}=${v as string}`))
+      return baseQuery.push(...value.map(v => `${key}[]=${v as string}`))
 
     if (value) {
       return Object.entries(value).forEach(([k, v]) => {
