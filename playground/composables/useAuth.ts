@@ -3,13 +3,8 @@ import { useAuthStore } from '@/stores/auth'
 import { AuthSchema } from '@/schemas'
 
 export default function () {
-  const { $pinia, $api } = useNuxtApp()
-
+  const { $pinia, $api, $fetchCsrfToken } = useNuxtApp()
   const authStore = useAuthStore($pinia)
-
-  function fetchCsrfToken() {
-    return $api<void>('/sanctum/csrf-cookie')
-  }
 
   async function fetchUser(headers?: HeadersInit) {
     const resp = await $api('/api/user', { headers }, {
@@ -20,7 +15,7 @@ export default function () {
   }
 
   return {
-    fetchCsrfToken,
+    fetchCsrfToken: $fetchCsrfToken,
     fetchUser,
   }
 }

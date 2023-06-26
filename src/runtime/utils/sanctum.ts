@@ -20,10 +20,10 @@ export function getHeaders(options: GetHeadersPayload) {
       .filter((c) => {
         const cookie = c.split('=')[0]
         return options.cookieNames.reduce(
-          (check, name) => check && (
+          (check, name) => check || (
             typeof name === 'string'
               ? name === cookie
-              : name.test(cookie)), true)
+              : name.test(cookie)), false)
       })
       .join('; ')
   }

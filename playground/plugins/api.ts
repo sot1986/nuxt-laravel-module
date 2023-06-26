@@ -28,7 +28,8 @@ export default defineNuxtPlugin(() => {
       Accept: 'Application/json',
     },
     onRequest({ options }) {
-      $laravel.mergeHeaders(getHeaders(), options)
+      // $laravel.mergeHeaders({ ...getHeaders() }, options)
+      options.headers = { ...options.headers, ...getHeaders() }
 
       if (options.body)
         options.body = $laravel.convertDataCase(options.body, 'snakeCase')
@@ -70,5 +71,9 @@ export default defineNuxtPlugin(() => {
 
   const api: ApiFetch = $laravel.createApiFetch(baseApi, {})
 
-  return { provide: { api } }
+  function fetchCsrfToken() {
+    return baseApi<void>('/sanctum/csrf-cookie')
+  }
+
+  return { provide: { api, fetchCsrfToken } }
 })
