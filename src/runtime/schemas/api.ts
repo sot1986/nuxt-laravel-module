@@ -8,11 +8,11 @@ export const TimeStampsSchema = z.object({
 
 export const PagePaginationSchema = z.object({
   currentPage: z.number().min(0).int(),
-  from: z.number().min(0).int(),
+  from: z.number().min(0).int().nullable(),
   lastPage: z.number().min(0).int(),
   path: z.string().url(),
   perPage: z.number().min(0).int(),
-  to: z.number().min(0).int(),
+  to: z.number().min(0).int().nullable(),
   total: z.number().min(0).int(),
   links: z.array(
     z.object({
