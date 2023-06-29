@@ -88,6 +88,12 @@ export default function (baseFetch: NodeJS.Global['$fetch'], {
         return preFetchedResponse
       }
 
+      if (responseOptions?.loading?.value)
+        throw new Error('Loading ...')
+
+      if (responseOptions?.loading)
+        responseOptions.loading.value = true
+
       try {
         const cb = async (cache: boolean) => {
           const response = await target(request, options)
@@ -125,6 +131,10 @@ export default function (baseFetch: NodeJS.Global['$fetch'], {
         }
 
         throw error
+      }
+      finally {
+        if (responseOptions?.loading?.value)
+          responseOptions.loading.value = false
       }
     },
   }) as ApiFetch

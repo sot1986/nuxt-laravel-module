@@ -44,6 +44,7 @@ export type ApiFetchBuilder<T> = T extends (request: infer Req, options?: infer 
       onSuccess?: (response: Resp) => void | Promise<void>
       preFetch?: (request: Req, options?: Opt) => Promise<Resp | null>
       cache?: number
+      loading?: { value: boolean }
     }) => Promise<Resp>)
   : T
 
