@@ -40,7 +40,7 @@ export default function<Tdata extends object>(
       return
     }
 
-    issues.value = issues.value.filter(i => i.path.join('.') !== key)
+    issues.value = issues.value.filter(i => i.path.join('.') !== String(key))
   }
 
   return {

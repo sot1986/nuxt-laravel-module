@@ -20,7 +20,7 @@ const AccessTokenSchema = z.object({
   token: z.string(),
 })
 
-const { execute: fetchToken, data } = useAsyncData('auth-access-token', () => $api('/api/user/access-token', undefined, { validate: AccessTokenSchema }), { immediate: false })
+const { execute: fetchToken, data } = useAsyncData('auth-access-token', () => $api('/api/user/access-token', { method: 'POST' }, { validate: AccessTokenSchema }), { immediate: false })
 </script>
 
 <template>

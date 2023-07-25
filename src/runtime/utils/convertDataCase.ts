@@ -52,7 +52,7 @@ export default function convertDataCase<T>(data: T, newCase: 'camelCase' | 'snak
 
   const newCaseObject = {} as Record<string, unknown>
   Object.entries(data).forEach(([key, value]) => {
-    const newCaseKey = useChangeCase(key, newCase).value
+    const newCaseKey = key.split('.').map(k => useChangeCase(k, newCase).value).join('.')
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const newValue = convertDataCase(value, newCase)
     newCaseObject[newCaseKey] = newValue

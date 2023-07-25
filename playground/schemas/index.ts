@@ -11,7 +11,9 @@ export const UserSchema = z.object({
 export const AuthSchema = UserSchema.merge(z.object({
   emailVerifiedAt: z.string().datetime().nullable(),
   mfaEnabled: z.boolean().nullable(),
-})).merge(LaraApiSchemas.TimeStampsSchema)
+})).merge(LaraApiSchemas.TimeStampsSchema).partial({
+  mfaEnabled: true,
+})
 
 export const PostSchema = z.object({
   id: z.coerce.bigint(),
@@ -19,3 +21,5 @@ export const PostSchema = z.object({
   content: z.string().min(1).max(1000),
   userId: z.coerce.bigint().positive(),
 }).merge(LaraApiSchemas.TimeStampsSchema)
+
+export type Auth = z.infer<typeof AuthSchema>

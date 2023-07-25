@@ -52,4 +52,21 @@ describe('request are converted in snake Case', () => {
     const values = Array.from((afterData as FormData).values())
     expect(values).toEqual(['Matteo', 'Presot', 'viaGermania', bornDate])
   })
+
+  it('convert composite errors keys', () => {
+    const error = {
+      message: 'The other.requirements.0 field must be a string.',
+      errors: {
+        'other.requirements.0': [
+          'The other.requirements.0 field must be a string.',
+        ],
+      },
+    }
+
+    const afterError = convertDataCase(error, 'camelCase') as unknown
+
+    expect(afterError).toEqual({
+      ...error,
+    })
+  })
 })
